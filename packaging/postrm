@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = purge ]; then
+  rm -rf /etc/adb-visual-mcp
+  rm -rf /opt/adb-visual-mcp
+fi
+
+if [ -d /run/systemd/system ]; then
+  systemctl daemon-reload || true
+fi
+
+exit 0

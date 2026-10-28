@@ -6,4 +6,5 @@ __pycache__/
 .uv-cache/
 dist/
 build/
+.build/
 *.egg-info/

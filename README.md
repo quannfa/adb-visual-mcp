@@ -74,3 +74,52 @@ The server does not identify buttons or choose coordinates. Callers should use a
 uv run pytest
 uv run python tests/smoke.py
 ```
+
+## Install from .deb
+
+Release packages are attached to GitHub releases:
+
+- `adb-visual-mcp_<version>_amd64.deb` for a normal Linux host
+- `adb-visual-mcp-wsl_<version>_amd64.deb` for WSL2, reusing the Windows adb server
+
+```bash
+sudo apt install ./adb-visual-mcp_<version>_amd64.deb
+```
+
+The package installs a `systemd` service and starts it on port `8799` at
+`/mcp`. See [docs/INSTALL.md](docs/INSTALL.md) for the WSL2 bridge, the
+configuration file at `/etc/adb-visual-mcp/env`, and how to disable or move
+the service.
+
+## WSL2 bridge (Windows USB device)
+
+On WSL2 the reliable path is to let Windows own the USB device and reuse its
+adb server from WSL, instead of attaching USB through `usbipd`:
+
+```powershell
+C:\Users\<you>\pt-win\platform-tools\adb.exe devices -l
+```
+
+Then install `adb-visual-mcp-wsl` in WSL and run:
+
+```bash
+adb-visual-mcp-wsl-check
+sudo systemctl enable --now adb-visual-mcp
+```
+
+The launcher sets `ADB_SERVER_SOCKET=tcp:127.0.0.1:5037`, so `127.0.0.1`
+inside WSL must reach the Windows loopback (mirrored networking). Override
+`ADB_SERVER_SOCKET` or `ADB_VISUAL_MCP_ADB` in `/etc/adb-visual-mcp/env` if
+needed.
+
+## Build the packages
+
+```bash
+./packaging/build-deb.sh
+ls dist/*.deb
+```
+
+The script creates a self-contained venv with `uv` and packs it into the
+`.deb`, so installation does not need network access. Use
+`REBUILD_VENV=1` to rebuild the venv and `VERSION=x.y.z` to override the
+version.

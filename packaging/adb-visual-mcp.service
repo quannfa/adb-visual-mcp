@@ -1,0 +1,15 @@
+[Unit]
+Description=adb-visual-mcp Android visual MCP server
+Documentation=file:/usr/share/doc/adb-visual-mcp/INSTALL.md file:/usr/share/doc/adb-visual-mcp-wsl/INSTALL.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/adb-visual-mcp/env
+ExecStart=/usr/bin/adb-visual-mcp
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

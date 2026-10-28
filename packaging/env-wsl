@@ -1,0 +1,14 @@
+# adb-visual-mcp environment (WSL2 bridge variant).
+# Edit and run: sudo systemctl restart adb-visual-mcp
+#
+# Reuse the Windows adb server. Start adb.exe on Windows first:
+#   C:\Users\<you>\pt-win\platform-tools\adb.exe devices
+ADB_SERVER_SOCKET=tcp:127.0.0.1:5037
+# Optional: pin the adb client or the target device serial.
+#ADB_VISUAL_MCP_ADB=/usr/bin/adb
+#ADB_VISUAL_MCP_DEVICE=43d715fe
+ADB_VISUAL_MCP_TRANSPORT=streamable-http
+# 0.0.0.0 lets other LAN hosts reach the MCP endpoint; use 127.0.0.1 for local-only.
+ADB_VISUAL_MCP_HOST=0.0.0.0
+ADB_VISUAL_MCP_PORT=8799
+ADB_VISUAL_MCP_PATH=/mcp

@@ -1,0 +1,10 @@
+# adb-visual-mcp environment (Linux variant).
+# Edit and run: systemctl restart adb-visual-mcp
+#
+# Optional: pin the adb executable or the target device serial.
+#ADB_VISUAL_MCP_ADB=/usr/bin/adb
+#ADB_VISUAL_MCP_DEVICE=emulator-5554
+ADB_VISUAL_MCP_TRANSPORT=streamable-http
+ADB_VISUAL_MCP_HOST=127.0.0.1
+ADB_VISUAL_MCP_PORT=8799
+ADB_VISUAL_MCP_PATH=/mcp

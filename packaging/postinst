@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+  configure)
+    if [ -d /run/systemd/system ]; then
+      systemctl daemon-reload || true
+      systemctl enable adb-visual-mcp.service >/dev/null 2>&1 || true
+      systemctl restart adb-visual-mcp.service || true
+    fi
+    ;;
+esac
+
+exit 0
