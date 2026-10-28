@@ -107,6 +107,27 @@ class Adb:
         cp = self.run(args, serial=serial, timeout=timeout, check=check)
         return cp.stdout.decode("utf-8", "replace").strip()
 
+    def run_raw(
+        self,
+        args: list[str],
+        serial: str | None = None,
+        timeout: float | None = None,
+    ) -> subprocess.CompletedProcess[bytes]:
+        """Run adb without raising on a non-zero exit code.
+
+        Used by the generic adb_command tool, which reports the exit code and
+        stderr instead of turning failures into exceptions.
+        """
+        cmd = self._cmd(args, serial)
+        try:
+            return subprocess.run(
+                cmd,
+                capture_output=True,
+                timeout=timeout or self.settings.command_timeout,
+            )
+        except FileNotFoundError as exc:
+            raise AdbError(f"adb executable not found: {self.adb}") from exc
+
     def shell(
         self,
         command: str,

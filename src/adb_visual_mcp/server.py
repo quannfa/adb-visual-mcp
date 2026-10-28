@@ -16,11 +16,14 @@ from .actions import to_json
 from .adb import Adb, AdbError
 from .config import Settings
 from .imaging import overlay_grid, png_b64
+from .runner import run_adb_command
 
 VERSION = __version__
 GridSize = Annotated[int, Field(ge=0, le=200)]
 ClickCount = Annotated[int, Field(ge=1, le=10)]
 DragDuration = Annotated[int, Field(ge=0, le=10000)]
+CommandTimeout = Annotated[float, Field(ge=1, le=300)]
+OutputLimit = Annotated[int, Field(ge=100, le=200000)]
 
 mcp = MCPServer(
     name="adb-visual-mcp",
@@ -62,6 +65,34 @@ def devices() -> CallToolResult:
         for d in adb.devices()
     ]
     return _result([_text({"ok": True, "devices": rows})])
+
+
+@mcp.tool(structured_output=False)
+def adb_command(
+    args: str | list[str],
+    device: str | None = None,
+    timeout_s: CommandTimeout = 30,
+    max_output_chars: OutputLimit = 20000,
+) -> CallToolResult:
+    """Run an arbitrary adb command and return exit code, stdout, and stderr.
+
+    `args` is the adb argument list, for example ["shell", "getprop",
+    "ro.product.model"] or "shell pm list packages". Without `device` the
+    command runs without `-s`, so global commands such as `devices` or
+    `version` work; pass a serial for device-scoped commands.
+    """
+    adb = Adb(Settings())
+    return _result([
+        _text(
+            run_adb_command(
+                adb,
+                args,
+                device=device,
+                timeout_s=timeout_s,
+                max_output_chars=max_output_chars,
+            )
+        )
+    ])
 
 
 @mcp.tool(structured_output=False)

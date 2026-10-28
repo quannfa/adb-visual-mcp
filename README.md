@@ -7,12 +7,24 @@ The server talks to Android through `adb shell` and `adb exec-out`; it does not 
 ## Tools
 
 - `devices()` lists devices and readiness.
+- `adb_command(args, device?, timeout_s?, max_output_chars?)` runs any adb command and returns exit code, stdout, and stderr.
 - `screenshot(device?, grid_rows?, grid_cols?)` returns JSON geometry plus a PNG. The optional grid is only a visual reference overlay.
 - `click(x, y, device?, button?, count?)` taps absolute screen coordinates. Right and middle map to a long press.
 - `mouse(action, device?, ...)` supports `scroll` and `drag` (swipe).
 - `keyboard(action, device?, text?, keys?)` types text or sends Android key events.
 
-Every tool accepts an optional `device` serial. With no argument, exactly one ready device must be present. The server never caches the selected device or current screen.
+The visual and input tools accept an optional `device` serial. With no argument, exactly one ready device must be present. The server never caches the selected device or current screen.
+
+`adb_command` is the escape hatch for everything the typed tools do not cover (installing APKs, reading properties, package management). Its `args` is either an argument list or a single string that is split like a shell line. Without `device` it runs without `-s`, so global commands such as `devices` and `version` work. Output is capped per stream; long output keeps the head and tail and reports how many characters were dropped.
+
+```json
+{
+  "args": ["shell", "pm", "list", "packages"],
+  "device": "emulator-5554",
+  "timeout_s": 30,
+  "max_output_chars": 20000
+}
+```
 
 ## Install
 
@@ -60,5 +72,5 @@ The server does not identify buttons or choose coordinates. Callers should use a
 
 ```bash
 uv run pytest
-uv run python tests/smoke.py "uv run adb-visual-mcp"
+uv run python tests/smoke.py
 ```
