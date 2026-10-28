@@ -31,7 +31,8 @@ mcp = MCPServer(
     instructions=(
         "Stateless pure-visual Android control over adb shell. Observe with "
         "screenshot, interact with click/mouse/keyboard, then screenshot again "
-        "to verify. No UI tree, OCR, or element cache is used."
+        "to verify. Use adb_command for everything else (packages, properties, "
+        "installs). No UI tree, OCR, or element cache is used."
     ),
 )
 
